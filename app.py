@@ -8,14 +8,22 @@ from bitcoinlib.mnemonic import Mnemonic
 import os
 
 #global vars
-db_uri = 'mysql://corepay:18781875Core@localhost:3306/corepay_ltc'
-rpc = authproxy.AuthServiceProxy("http://%s:%s@127.0.0.1:18332"%("corepay","18781875Core"))
+db_uri = 'mysql://corepay:18781875Core.@localhost:3306/corepay_ltc'
+rpc = authproxy.AuthServiceProxy("http://%s:%s@127.0.0.1:19332"%("corepay","18781875Core"))
 
 # base_url = 'http://user:password@server_url:18332'
 # bdc = LitecoindClient(base_url=base_url)
 # txid = 'e0cee8955f516d5ed333d081a4e2f55b999debfff91a49e8123d20f7ed647ac5'
 # rt = bdc.getrawtransaction(txid)
 # print("Raw: %s" % rt)
+
+#rpcuser=corepay
+#rpcpassword=18781875Core
+#server=1
+#txindex=1
+#testnet=1
+#[test]
+#rpcport=19332
 
 # init app
 app = Flask(__name__)
@@ -66,14 +74,14 @@ def send_to():
     t = t = w.send_to(reciever_address, amount ,network='litecoin_testnet',offline=True)
     return jsonify({t.info()})
 
-@app.route('/wallet/tx/satus',methods=['GET'])
+@app.route('/wallet/tx/status',methods=['POST'])
 def tx_status():
     # wallet = request.json['wallet']
     address = request.json['address']
     #rescan blockchain
-    if rpc.rescanblockchain():
-        last_tx = rpc.listrecievedbyaddress(1,True,True,address)
-        return last_tx
+    #rpc.rescanblockchain()
+    last_tx = rpc.listreceivedbyaddress(1,True,True,address)
+    return jsonify(last_tx)
 # start server
 if __name__ == '__main__':
     app.run(debug=True)
